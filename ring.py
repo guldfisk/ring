@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import typing as t
 
 from collections import OrderedDict
 from ordered_set import OrderedSet
-
 
 T = t.TypeVar('T')
 
@@ -19,15 +20,15 @@ class Ring(t.Generic[T]):
 
     def __init__(self, content: t.Iterable[T]):
         self._raw_content = OrderedSet(content)
-        self._content = OrderedDict(
+        self._content: OrderedDict[T, _RingLink] = OrderedDict(
             {content: _RingLink(content) for content in self._raw_content}
         )
 
         _content = tuple(self._content.values())
 
         for i in range(len(_content)):
-            _content[i].next = _content[(i+1)%len(_content)]
-            _content[i].previous = _content[i-1]
+            _content[i].next = _content[(i + 1) % len(_content)]
+            _content[i].previous = _content[i - 1]
 
         try:
             self._current = _content[-1]
@@ -35,7 +36,7 @@ class Ring(t.Generic[T]):
             raise ValueError('Ring must contain at least one object')
 
     @property
-    def all(self) -> OrderedSet[T]:
+    def all(self) -> t.Collection[T]:
         return self._raw_content
 
     def current(self) -> T:
@@ -55,13 +56,19 @@ class Ring(t.Generic[T]):
     def peek_previous(self) -> T:
         return self._current.previous.content
 
-    def loop_from(self, start: t.Any) -> t.Iterable[T]:
+    def loop_from(self, start: T) -> t.Iterator[T]:
         link = self._content[start]
         while True:
             yield link.content
             link = link.next
             if link.content == start:
                 break
+
+    def after(self, item: T) -> T:
+        return self._content[item].next.content
+
+    def before(self, item: T) -> T:
+        return self._content[item].next.previous
 
     def __iter__(self) -> t.Iterable[T]:
         while True:
