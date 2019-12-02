@@ -8,20 +8,20 @@ from ordered_set import OrderedSet
 T = t.TypeVar('T')
 
 
-class _RingLink(object):
+class RingLink(object):
 
     def __init__(self, content: object):
         self.content = content
-        self.next: t.Optional[_RingLink] = None
-        self.previous: t.Optional[_RingLink] = None
+        self.next: t.Optional[RingLink] = None
+        self.previous: t.Optional[RingLink] = None
 
 
 class Ring(t.Generic[T]):
 
-    def __init__(self, content: t.Iterable[T]):
+    def __init__(self, content: t.Iterable[T], link_type: t.Type[RingLink] = RingLink):
         self._raw_content = OrderedSet(content)
-        self._content: OrderedDict[T, _RingLink] = OrderedDict(
-            {content: _RingLink(content) for content in self._raw_content}
+        self._content: OrderedDict[T, RingLink] = OrderedDict(
+            {content: link_type(content) for content in self._raw_content}
         )
 
         _content = tuple(self._content.values())
