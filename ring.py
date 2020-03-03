@@ -68,7 +68,7 @@ class Ring(t.Generic[T]):
         return self._content[item].next.content
 
     def before(self, item: T) -> T:
-        return self._content[item].next.previous
+        return self._content[item].previous.content
 
     def __iter__(self) -> t.Iterable[T]:
         while True:
