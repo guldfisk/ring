@@ -3,7 +3,7 @@ from __future__ import annotations
 import typing as t
 
 from collections import OrderedDict
-from ordered_set import OrderedSet
+
 
 T = t.TypeVar('T')
 
@@ -19,9 +19,8 @@ class RingLink(object):
 class Ring(t.Generic[T]):
 
     def __init__(self, content: t.Iterable[T], link_type: t.Type[RingLink] = RingLink):
-        self._raw_content = OrderedSet(content)
         self._content: OrderedDict[T, RingLink] = OrderedDict(
-            {content: link_type(content) for content in self._raw_content}
+            {content: link_type(content) for content in content}
         )
 
         _content = tuple(self._content.values())
@@ -37,7 +36,7 @@ class Ring(t.Generic[T]):
 
     @property
     def all(self) -> t.Collection[T]:
-        return self._raw_content
+        return self._content.keys()
 
     def current(self) -> T:
         return self._current.content
@@ -80,5 +79,5 @@ class Ring(t.Generic[T]):
     def __eq__(self, other: object) -> bool:
         return (
             isinstance(other, self.__class__)
-            and self._raw_content == other._raw_content
+            and self.all == other.all
         )
