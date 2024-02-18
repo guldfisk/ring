@@ -1,15 +1,13 @@
 from __future__ import annotations
 
 import typing as t
-
 from collections import OrderedDict
 
 
-T = t.TypeVar('T')
+T = t.TypeVar("T")
 
 
 class RingLink(object):
-
     def __init__(self, content: object):
         self.content = content
         self.next: t.Optional[RingLink] = None
@@ -17,11 +15,8 @@ class RingLink(object):
 
 
 class Ring(t.Generic[T]):
-
     def __init__(self, content: t.Iterable[T], link_type: t.Type[RingLink] = RingLink):
-        self._content: OrderedDict[T, RingLink] = OrderedDict(
-            {content: link_type(content) for content in content}
-        )
+        self._content: OrderedDict[T, RingLink] = OrderedDict({content: link_type(content) for content in content})
 
         _content = tuple(self._content.values())
 
@@ -32,7 +27,7 @@ class Ring(t.Generic[T]):
         try:
             self._current = _content[-1]
         except IndexError:
-            raise ValueError('Ring must contain at least one object')
+            raise ValueError("Ring must contain at least one object")
 
     @property
     def all(self) -> t.Collection[T]:
@@ -77,7 +72,4 @@ class Ring(t.Generic[T]):
         return self._content.__len__()
 
     def __eq__(self, other: object) -> bool:
-        return (
-            isinstance(other, self.__class__)
-            and self.all == other.all
-        )
+        return isinstance(other, self.__class__) and self.all == other.all
